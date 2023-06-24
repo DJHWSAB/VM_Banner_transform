@@ -1,0 +1,22 @@
+/* 这里存放的是样式重置 */
+html,body,div,ul,li,a,img {
+  margin: 0;
+  padding: 0;
+}
+
+ul,li {
+  /* 去除小圆点 */
+  list-style: none;
+}
+
+a {
+  /* 去除下划线 */
+  text-decoration: none;
+  /* 不要外轮廓 */
+  outline: none;
+}
+
+img {
+  /* 顶部基线对齐 */
+  vertical-align: top;
+}

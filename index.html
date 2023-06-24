@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- 站点图标 -->
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+  <!-- 样式重置 -->
+  <link rel="stylesheet" href="./css/reset.css">
+  <!-- banner -->
+  <link rel="stylesheet" href="./css/banner.css">
+</head>
+
+<body>
+  <div class="banner">
+    <!-- 1.图片 -->
+    <ul class="images"></ul>
+
+    <!-- 2.左右按钮 -->
+    <div class="control prev"></div>
+    <div class="control next"></div>
+
+    <!-- 3.指示器(小圆点) -->
+    <div class="indicator"></div>
+  </div>
+
+  <script src="./json/banner_data.js"></script>
+  <script>
+    // 0.资源服务地址
+    var serverURL = "https://res.vmallres.com/"
+
+    // 1.获取元素
+    var bannerEl = document.querySelector(".banner")
+    var imagesEl = bannerEl.querySelector(".images")
+    var indicatorEl = bannerEl.querySelector(".indicator")
+    var preBtnEl = bannerEl.querySelector(".prev")
+    var nextBtnEl = bannerEl.querySelector(".next")
+
+    // 2.定义变量
+    var bannersCount = banners.length // banners的长度大小
+    var previousIndex = 0 // 上一个索引
+    var currentIndex = 0 // 当前索引
+    var timeID = null // 定时器
+
+    // 3.根据数据动态添加页面内容
+    // 3.1 动态添加图片相关内容
+    for (var i = 0; i < bannersCount; i++) {
+      // 获取数据
+      var bannerItemEl = banners[i]
+      // 创建li元素
+      var itemEl = document.createElement("li")
+      itemEl.classList.add("item")
+       // 设置itemEl的样式(left)
+      itemEl.style.left = `${i * 100}%`
+      imagesEl.append(itemEl)
+
+      // 🚚 方法一: 一个一个创建元素
+      // 创建a元素
+      // var aEl = document.createElement("a")
+      // aEl.href = "#"
+      // itemEl.append(aEl)
+
+      // // 创建img元素
+      // var imgEl = document.createElement("img")
+      // imgEl.src = `${serverURL}${bannerItemEl.imgUrl}`
+      // aEl.append(imgEl)
+
+      // 🚚 方法二: innHTML
+      itemEl.innerHTML = `
+        <a href="#">
+          <img src ="${serverURL}${bannerItemEl.imgUrl}">
+        </a>
+      `
+    }
+
+    // 3.2 动态添加指示器(小圆点)内容
+    for (var i = 0; i < bannersCount; i++) {
+      // 创建div元素
+      var itemEl = document.createElement("div")
+      itemEl.classList.add("item")
+      if (i === 0) itemEl.classList.add("active")
+      indicatorEl.append(itemEl)
+
+      // 监听指示器(小圆点)的点击 ✅
+      itemEl.index = i
+      itemEl.onclick = function () {
+        previousIndex = currentIndex
+        currentIndex = this.index
+        // 切换轮播图
+        switchBanner()
+      }
+    }
+
+    // 4.自动轮播
+    startTime()
+
+    // 5.鼠标经过banner清除定时器
+    bannerEl.onmouseenter = function () {
+      stopTime()
+    }
+
+    // 6.鼠标离开banner开启定时器
+    bannerEl.onmouseleave = function () {
+      startTime()
+    }
+
+    // // 7.指示器(小圆点)的点击
+    // indicatorEl.onclick = function (event) {
+    //   if (event.target === this) return
+    //   var itemEl = event.target
+    //   // 获取索引
+    //   // 🚚 方法一
+    //   // for (var i = 0; i < bannersCount; i++) {
+    //   //   if (this.children[i] === itemEl) {
+    //   //     var index = i
+    //   //     break
+    //   //   }
+    //   // }
+
+    //   // 🚚 方法二
+    //   // var index = Array.from(this.children).indexOf(itemEl)
+
+    //   // 🚚 方法三
+    //   var index = Array.from(this.children).findIndex(function(item) {
+    //     return itemEl === item
+    //   })
+
+    //   previousIndex = currentIndex
+    //   currentIndex = index
+    //   // 切换轮播图
+    //   switchBanner()
+    // }
+
+    // 8.左右按钮的点击
+    preBtnEl.onclick = function () {
+      previousIndex = currentIndex
+      currentIndex--
+      if (currentIndex === -1) currentIndex = bannersCount - 1
+      // 切换轮播图
+      switchBanner()
+    }
+
+    // 简洁写法: nextBtnEl.onclick = nextSwitch 不推荐 阅读性太差 🔥
+    nextBtnEl.onclick = function () {
+      // 播放下一个
+      nextBanner()
+    }
+
+    // 封装函数: 切换轮播图
+    function switchBanner() {
+      // 1.切换图片的item
+      imagesEl.style.transform = `translateX(${-currentIndex * 100}%)`
+      imagesEl.style.transition = "all 1000ms ease"
+
+      // 2.切换指示器(小圆点)的item
+      var previousItemEl = indicatorEl.children[previousIndex]
+      var currentItemEl = indicatorEl.children[currentIndex]
+      previousItemEl.classList.remove("active")
+      currentItemEl.classList.add("active")
+    }
+
+    // 封装函数: 开启定时器
+    function startTime() {
+      if (timeID) return
+      // 简洁写法: timeID = setInterval(nextSwitch,3000) 不推荐 阅读性太差 🔥
+      timeID = setInterval(function () {
+        // 播放下一个
+        nextBanner()
+      }, 3000)
+    }
+
+    // 封装函数: 清除定时器
+    function stopTime() {
+      if (!timeID) return
+      clearInterval(timeID)
+      timeID = null // 清除定时器之后, 必须timeID赋值为null
+    }
+
+    // 封装函数: 播放下一个
+    function nextBanner() {
+      previousIndex = currentIndex
+      currentIndex++
+      if (currentIndex === bannersCount) currentIndex = 0
+      // 切换轮播图
+      switchBanner()
+    }
+
+
+    // window的焦点(离开浏览器窗口时,清除定时器)
+    document.onvisibilitychange = function () {
+      if (this.visibilityState === "visible") {
+        // 开启定时器
+        startTime()
+      } else if (this.visibilityState === "hidden") {
+        // 停止定时器
+        stopTime()
+      }
+    }
+  </script>
+</body>
+
+</html>

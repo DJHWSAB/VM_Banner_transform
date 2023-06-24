@@ -1,0 +1,98 @@
+/* 这是存放的是轮播图的样式 */
+
+.banner {
+  position: relative;
+  overflow: hidden;
+}
+
+/* 1.图片 */
+.banner .images {
+  position: relative;
+  height: 550px;
+}
+
+.banner .images .item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.banner .images .item a {
+  display: block;
+}
+
+.banner .images .item a img {
+  /* 图片水平居中且等比例缩放 */
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  width: 1440px;
+  height: 550px;
+}
+
+/* 2.左右按钮 */
+.banner .control {
+  /* 垂直居中 */
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  width: 41px;
+  height: 69px;
+  background: url(../img/sprite_bg.png) no-repeat;
+  /* 默认隐藏 */
+  opacity: 0;
+  /* 鼠标小手 */
+  cursor: pointer;
+}
+
+.banner:hover .control {
+  opacity: 1;
+}
+
+.banner .control.prev {
+  /* (1440 - 1200)/2 +200 = 320px */
+  left: 320px;
+  background-position: -84px 50%;
+}
+
+.banner .control.prev:hover {
+  background-position: 0 50%;
+}
+
+.banner .control.next {
+  right: 320px;
+  background-position: -125px 50%;
+}
+
+.banner .control.next:hover {
+  background-position: -42px 50%;
+}
+
+/* 3.指示器(小圆点) */
+.banner .indicator {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  height: 32px;
+  display: flex;
+  /* 垂直居中 */
+  align-items: center;
+}
+
+.banner .indicator .item {
+  width: 8px;
+  height: 8px;
+  margin: 0 6px;
+  background-color: rgba(0, 0, 0, .2);
+  border-radius: 50%;
+  /* 鼠标小手 */
+  cursor: pointer;
+}
+
+.banner .indicator .item.active {
+  width: 12px;
+  background-color: #fff;
+}
